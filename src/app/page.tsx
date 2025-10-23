@@ -202,9 +202,9 @@ export default function Home() {
                 errors={errors}
                 />
 
-              <div className="mt-6 flex items-center justify-between">
-                <div className="text-sm text-gray-600">Total value: <span className="font-semibold text-gray-900">${totalValue.toFixed(2)}</span></div>
-            <Button disabled={visits.length === 0} onClick={onShowOptions}>
+              <div className="mt-6 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
+                <div className="text-base sm:text-sm text-gray-600 text-center sm:text-left">Total value: <span className="font-semibold text-gray-900">${totalValue.toFixed(2)}</span></div>
+            <Button disabled={visits.length === 0} onClick={onShowOptions} className="w-full sm:w-auto">
               Design payment plan
             </Button>
               </div>
@@ -379,7 +379,7 @@ export default function Home() {
                           dataKey="amount"
                           fill="url(#barGradient)"
                           radius={[6,6,2,2]}
-                          minPointSize={3}
+                          minPointSize={0}
                           barSize={18}
                         >
                             <LabelList position="top" content={(props) => {
@@ -444,7 +444,7 @@ export default function Home() {
                     </label>
                     <input
                       type="range"
-                      min={currentPlan ? Math.ceil(findMinimumDeposit(visits.map(v => ({
+                      min={currentPlan ? Math.floor(findMinimumDeposit(visits.map(v => ({
                         ...v,
                         travelFee: Number.isFinite(v.travelFee) ? v.travelFee : 0,
                         consultingFee: Number.isFinite(v.consultingFee) ? v.consultingFee : 0,
@@ -456,7 +456,7 @@ export default function Home() {
                       className="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer slider"
                     />
                     <div className="flex justify-between text-xs text-slate-600 mt-1">
-                      <span>Min: ${currentPlan ? Math.ceil(findMinimumDeposit(visits.map(v => ({
+                      <span>Min: ${currentPlan ? Math.floor(findMinimumDeposit(visits.map(v => ({
                         ...v,
                         travelFee: Number.isFinite(v.travelFee) ? v.travelFee : 0,
                         consultingFee: Number.isFinite(v.consultingFee) ? v.consultingFee : 0,
