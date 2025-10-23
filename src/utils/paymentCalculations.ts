@@ -32,8 +32,8 @@ export const generateCashFlow = (plan: PaymentPlan): CashFlow[] => {
 
   // Create monthly buckets from first visit month to last visit month
   const flow: CashFlow[] = [];
-  const startMonth = new Date(startDate.getFullYear(), startDate.getMonth(), 1);
-  const endMonth = new Date(endDate.getFullYear(), endDate.getMonth(), 1);
+  const startMonth = new Date(startDate.getFullYear(), startDate.getMonth(), 15);
+  const endMonth = new Date(endDate.getFullYear(), endDate.getMonth(), 15);
 
   let currentMonth = new Date(startMonth);
   let runningBalance = 0;
@@ -43,12 +43,14 @@ export const generateCashFlow = (plan: PaymentPlan): CashFlow[] => {
     let monthlyInvoices = 0;
 
     // Add deposit on first month
-    if (currentMonth.getTime() === startMonth.getTime() && plan.deposit > 0) {
+    if (currentMonth.getFullYear() === startMonth.getFullYear() &&
+        currentMonth.getMonth() === startMonth.getMonth() &&
+        plan.deposit > 0) {
       monthlyPayment += plan.deposit;
     }
 
     // Add regular monthly payment for each month in duration
-    const monthsFromStart = Math.floor((currentMonth.getTime() - startMonth.getTime()) / (1000 * 60 * 60 * 24 * 30.44));
+    const monthsFromStart = Math.round((currentMonth.getTime() - startMonth.getTime()) / (1000 * 60 * 60 * 24 * 30.44));
     if (monthsFromStart < plan.duration) {
       monthlyPayment += plan.monthlyPayment;
     }
@@ -56,9 +58,9 @@ export const generateCashFlow = (plan: PaymentPlan): CashFlow[] => {
     // Add visit costs for visits in this month (payment due on visit date)
     for (const visit of plan.visits) {
       const visitDate = parseISO(visit.date);
-      const visitMonth = new Date(visitDate.getFullYear(), visitDate.getMonth(), 1);
 
-      if (visitMonth.getTime() === currentMonth.getTime()) {
+      if (visitDate.getFullYear() === currentMonth.getFullYear() &&
+          visitDate.getMonth() === currentMonth.getMonth()) {
         const visitCost = (visit.travelFee || 0) + (visit.consultingFee || 0);
         monthlyInvoices += visitCost;
       }
